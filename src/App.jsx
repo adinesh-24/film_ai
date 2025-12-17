@@ -9,6 +9,8 @@ import Stat from "./components/Stat";
 import Hero from "./components/Hero";
 import Search from "./components/Search";
 import ImagePopGrid from "./components/ImagePopGrid";
+import SearchBeautifully from "./components/SearchBeautifully";
+import InfluenceSearchSlider from "./components/InfluenceSearchSlider";
 import CoverLogo from "./components/CoverLogo";
 import CreativityTools from "./components/CreativityTools";
 import GenerateEdit from "./components/GenerateEdit";
@@ -249,6 +251,8 @@ export default function App() {
 
       <ImagePopGrid />
 
+
+
       <Reveal as="section" style={styles.marqueeSection} delay={140}>
         <div style={styles.marqueeHeader}>
           <h3 style={{ ...styles.marqueeTitle, color: activeTheme.colors.text }}>Trusted by the brands shaping culture</h3>
@@ -281,7 +285,8 @@ export default function App() {
 
       <IntroPlatform />
 
-      <FindInfluences />
+      <InfluenceSearchSlider />
+
       <CreativityTools />
 
       <GenerateEdit />
