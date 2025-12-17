@@ -93,7 +93,7 @@ export default function SearchBeautifully() {
 
 const styles = {
     section: {
-        padding: "120px 24px",
+        padding: "120px 24px 200px 24px",
         background: "#fff",
         color: "#000",
         overflow: "hidden", // Ensure horizontal slider doesn't break layout
@@ -126,7 +126,7 @@ const styles = {
         marginBottom: 80,
     },
     heading: {
-        fontSize: "clamp(60px, 7vw, 110px)",
+        fontSize: "clamp(60px, 7vw, 90px)",
         lineHeight: 0.9,
         fontWeight: 500,
         letterSpacing: "-0.04em",
@@ -274,5 +274,6 @@ const styles = {
         width: "65%", // Reduced from 80% to fit inside whitespace
         borderRadius: "0.5rem", // Slightly smaller radius to match scale
         boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+
     }
 };
