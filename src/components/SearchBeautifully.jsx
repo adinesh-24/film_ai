@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import idea1 from "../assets/idea-1.png";
 
 
 
@@ -73,13 +74,13 @@ export default function SearchBeautifully() {
                         <div style={styles.platformImages}>
                             {/* The image that apparently slides up or is positioned */}
                             <motion.img
-                                src="https://cdn.prod.website-files.com/68ad8a274502a69dfd5cd0aa/68ad8a274502a69dfd5cd17a_df4e6fc6b9a8adaffa0e0a4a31360885_search-image.avif"
+                                src={idea1}
                                 loading="eager"
                                 alt=""
                                 style={styles.searchPlatformImage}
-                                initial={{ y: 200, opacity: 0 }}
+                                initial={{ y: -300, opacity: 0 }}
                                 whileInView={{ y: 0, opacity: 1 }}
-                                transition={{ duration: 1, ease: "easeOut" }}
+                                transition={{ duration: 2, ease: "easeInOut" }}
                                 viewport={{ once: true }}
                             />
                         </div>

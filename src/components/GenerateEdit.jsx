@@ -6,11 +6,19 @@ import ideaMerged from "../assets/idea-merged.png";
 export default function GenerateEdit() {
     const [showResult, setShowResult] = useState(false);
 
+    // Use whileInView to trigger animation once
+    // We can use framer-motion's automatic viewport detection on elements instead of manual state
+    // But since we have conditional rendering logic (AnimatePresence), let's control it with a ref/state
+
+    // Use wrapper motion.div with onViewportEnter
+    const handleViewportEnter = () => {
+        // Delay slightly to let user see the inputs first, then merge
+        setTimeout(() => setShowResult(true), 1000);
+    };
+
+    // No interval needed
     useEffect(() => {
-        const interval = setInterval(() => {
-            setShowResult((prev) => !prev);
-        }, 3000); // Toggle every 3 seconds
-        return () => clearInterval(interval);
+        return () => { };
     }, []);
 
     return (
@@ -42,7 +50,16 @@ export default function GenerateEdit() {
                             </div>
                             <div style={styles.gridBackground}>
                                 <div style={styles.dropZone}>
-                                    DRAG AND DROP HERE
+                                    {showResult && (
+                                        <motion.img
+                                            src={ideaMerged}
+                                            alt="Preset Idea"
+                                            style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "12px" }}
+                                            initial={{ y: -100, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                            transition={{ duration: 2, ease: "easeInOut" }}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -57,42 +74,48 @@ export default function GenerateEdit() {
                             </div>
                             <div style={styles.gridBackground}>
                                 <div style={styles.combineImages}>
-                                    <AnimatePresence mode="wait">
-                                        {!showResult ? (
-                                            <motion.div
-                                                key="inputs"
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0, scale: 0.9 }}
-                                                transition={{ duration: 0.5 }}
-                                                style={{ display: "flex", gap: "20px", alignItems: "center" }}
-                                            >
+                                    <motion.div
+                                        onViewportEnter={handleViewportEnter}
+                                        viewport={{ once: true, amount: 0.5 }}
+                                        style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}
+                                    >
+                                        <AnimatePresence mode="wait">
+                                            {!showResult ? (
+                                                <motion.div
+                                                    key="inputs"
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
+                                                    transition={{ duration: 0.5 }}
+                                                    style={{ display: "flex", gap: "20px", alignItems: "center" }}
+                                                >
+                                                    <motion.img
+                                                        src={idea1}
+                                                        alt="Idea 1"
+                                                        style={styles.combineImg}
+                                                        layoutId="img1"
+                                                    />
+                                                    <motion.img
+                                                        src="https://cdn.prod.website-files.com/68ad8a274502a69dfd5cd0aa/68ad8a274502a69dfd5cd15c_knight-7.avif"
+                                                        alt="Idea 2"
+                                                        style={styles.combineImg}
+                                                        layoutId="img2"
+                                                    />
+                                                </motion.div>
+                                            ) : (
                                                 <motion.img
-                                                    src={idea1}
-                                                    alt="Idea 1"
-                                                    style={styles.combineImg}
-                                                    layoutId="img1"
+                                                    key="result"
+                                                    src={ideaMerged}
+                                                    alt="Merged Result"
+                                                    initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
+                                                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                                                    exit={{ opacity: 0, transition: { duration: 0 } }}
+                                                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                                                    style={{ ...styles.combineImg, width: "300px", height: "200px" }}
                                                 />
-                                                <motion.img
-                                                    src="https://cdn.prod.website-files.com/68ad8a274502a69dfd5cd0aa/68ad8a274502a69dfd5cd15c_knight-7.avif"
-                                                    alt="Idea 2"
-                                                    style={styles.combineImg}
-                                                    layoutId="img2"
-                                                />
-                                            </motion.div>
-                                        ) : (
-                                            <motion.img
-                                                key="result"
-                                                src={ideaMerged}
-                                                alt="Merged Result"
-                                                initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
-                                                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                                                exit={{ opacity: 0 }}
-                                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                                style={{ ...styles.combineImg, width: "300px", height: "200px" }}
-                                            />
-                                        )}
-                                    </AnimatePresence>
+                                            )}
+                                        </AnimatePresence>
+                                    </motion.div>
                                 </div>
                             </div>
                         </div>
