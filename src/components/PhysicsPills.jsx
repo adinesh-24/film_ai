@@ -7,22 +7,54 @@ const PhysicsPills = () => {
     const [hasStarted, setHasStarted] = React.useState(false);
 
     // Initial Data
-    const pills = [
+    // Initial Data
+    const basicPills = [
         { type: 'pill', text: "400K videos", color: "#0c0c0d", width: 140 },
         { type: 'pill', text: "5.8K movies", color: "#0c0c0d", width: 140 },
         { type: 'pill', text: "150K animations", color: "#0c0c0d", width: 180 },
         { type: 'pill', text: "1.5M stills", color: "#ff8c00", width: 200, fontSize: 24 },
         { type: 'pill', text: "5.5K music videos", color: "#0c0c0d", width: 180 },
-        { type: 'pill', text: "2K TV series", color: "#0c0c0d", width: 140 },
+        { type: 'pill', text: "2K TV series", color: "#2196f3", width: 140 }, // Blue
         { type: 'pill', text: "15K ads", color: "#0c0c0d", width: 120 },
     ];
 
+    // Generate ~50% more content focused on "Views" with varied colors
+    const viewPills = [
+        { type: 'pill', text: "100K+ views", color: "#e91e63", width: 150 }, // Pink
+        { type: 'pill', text: "250K+ views", color: "#0c0c0d", width: 150 },
+        { type: 'pill', text: "500K+ views", color: "#9c27b0", width: 150 }, // Purple
+        { type: 'pill', text: "1M+ views", color: "#0c0c0d", width: 140 },
+        { type: 'pill', text: "750K+ views", color: "#009688", width: 150 }, // Teal
+        { type: 'pill', text: "1.2M+ views", color: "#0c0c0d", width: 160 },
+        { type: 'pill', text: "300K+ views", color: "#ffc107", width: 150 }, // Amber
+        { type: 'pill', text: "900K+ views", color: "#0c0c0d", width: 150 },
+        { type: 'pill', text: "2M+ views", color: "#673ab7", width: 140 }, // Deep Purple
+        { type: 'pill', text: "50K+ views", color: "#0c0c0d", width: 130 },
+        { type: 'pill', text: "5M+ views", color: "#ff5722", width: 140 }, // Deep Orange
+        { type: 'pill', text: "800K+ views", color: "#0c0c0d", width: 150 },
+    ];
+
+    const pills = [...basicPills, ...viewPills];
+
     const shapes = [
-        { type: 'hexagon', color: '#2fb448', size: 80 }, // Scaled down slightly for canvas physics
+        { type: 'hexagon', color: '#2fb448', size: 80 },
         { type: 'rect', color: '#1a8f3d', width: 80, height: 110 },
         { type: 'cone', strokeColor: 'rgba(200, 200, 200, 0.5)', size: 60 },
         { type: 'sphere', strokeColor: '#ddd', size: 50 },
-        { type: 'eye', color: '#2fb448', size: 30 }
+        { type: 'eye', color: '#2fb448', size: 30 },
+        // New Shapes
+        { type: 'hexagon', color: '#e91e63', size: 60 },
+        { type: 'rect', color: '#2196f3', width: 60, height: 60 },
+        { type: 'sphere', strokeColor: '#ffc107', size: 40 },
+        { type: 'cone', strokeColor: '#9c27b0', size: 50 },
+        { type: 'rect', color: '#009688', width: 120, height: 40 },
+        { type: 'sphere', strokeColor: '#ff5722', size: 70 },
+        // More Interactive Eyes
+        { type: 'eye', color: '#00bcd4', size: 45 }, // Cyan
+        { type: 'eye', color: '#f44336', size: 35 }, // Red
+        { type: 'eye', color: '#673ab7', size: 28 }, // Deep Purple
+        { type: 'eye', color: '#ffeb3b', size: 42 }, // Yellow
+        { type: 'eye', color: '#e91e63', size: 32 }, // Pink
     ];
 
     useEffect(() => {
@@ -100,7 +132,7 @@ const PhysicsPills = () => {
 
         allItems.forEach((item) => {
             const x = Math.random() * (width - 200) + 100;
-            const y = Math.random() * -800 - 100; // Scatter higher up
+            const y = Math.random() * -2500 - 100; // Scatter higher up
 
             let body;
 
@@ -165,6 +197,49 @@ const PhysicsPills = () => {
         // Create runner
         const runner = Runner.create();
         Runner.run(runner, engine);
+
+        // Add Mouse Events for Interaction
+        Events.on(mouseConstraint, 'mousedown', (event) => {
+            const mousePosition = event.mouse.position;
+            const bodies = Composite.allBodies(engine.world);
+
+            // Check if any body is clicked (simplest way with Matter.js Query or just relying on mouseConstraint.body if active)
+            // mouseConstraint.body is null on mousedown sometimes if it hasn't picked it up yet? 
+            // Better to rely on the event source or use Query.
+
+            // Actually, mouseConstraint.body is set when dragging starts. Mousedown might be too early?
+            // Let's use Query.point
+            const clickedBodies = Matter.Query.point(bodies, mousePosition);
+
+            clickedBodies.forEach(body => {
+                const data = body.plugin.data;
+                if (data && data.type === 'eye') {
+                    // Toggle clicked state
+                    data.isClicked = !data.isClicked;
+
+                    // Add animation: Jump/Impulse
+                    Matter.Body.applyForce(body, body.position, { x: 0, y: -0.05 });
+                }
+            });
+        });
+
+        Events.on(mouseConstraint, 'mousemove', (event) => {
+            const mousePosition = event.mouse.position;
+            const bodies = Composite.allBodies(engine.world);
+            const foundBodies = Matter.Query.point(bodies, mousePosition);
+
+            let isHoveringInteractive = false;
+            for (let i = 0; i < foundBodies.length; i++) {
+                if (foundBodies[i].plugin.data && foundBodies[i].plugin.data.type === 'eye') {
+                    isHoveringInteractive = true;
+                    break;
+                }
+            }
+
+            if (sceneRef.current) {
+                sceneRef.current.style.cursor = isHoveringInteractive ? 'pointer' : 'default';
+            }
+        });
 
         // Custom Render Loop
         const canvas = render.canvas;
@@ -260,11 +335,25 @@ const PhysicsPills = () => {
                     ctx.arc(0, 0, data.size, 0, 2 * Math.PI);
                     ctx.fillStyle = data.color;
                     ctx.fill();
-                    // Pupil
-                    ctx.beginPath();
-                    ctx.arc(5, 0, data.size * 0.4, 0, 2 * Math.PI); // Slightly offset pupil for character
-                    ctx.fillStyle = '#000';
-                    ctx.fill();
+
+                    if (data.isClicked) {
+                        // Draw X
+                        ctx.strokeStyle = '#000';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        const r = data.size * 0.4;
+                        ctx.moveTo(-r, -r);
+                        ctx.lineTo(r, r);
+                        ctx.moveTo(r, -r);
+                        ctx.lineTo(-r, r);
+                        ctx.stroke();
+                    } else {
+                        // Pupil
+                        ctx.beginPath();
+                        ctx.arc(5, 0, data.size * 0.4, 0, 2 * Math.PI); // Slightly offset pupil for character
+                        ctx.fillStyle = '#000';
+                        ctx.fill();
+                    }
                     ctx.restore();
                 } else {
                     ctx.restore();
@@ -273,6 +362,7 @@ const PhysicsPills = () => {
 
             animationFrameId = requestAnimationFrame(draw);
         };
+
 
         draw();
 

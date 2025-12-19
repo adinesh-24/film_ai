@@ -1,7 +1,7 @@
 /* Base Layout */
 .fi-section {
     width: 100%;
-    min-height: 600px;
+    min-height: 900px;
     /* Reduced from 100vh */
     background-color: #ffffff;
     position: relative;
