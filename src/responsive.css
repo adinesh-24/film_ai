@@ -7,7 +7,9 @@
     padding: 0 16px;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-size: clamp(18px, 5vw, 32px);
   }
 
@@ -62,7 +64,9 @@
     padding: 0 12px;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-size: clamp(16px, 6vw, 24px);
   }
 
@@ -110,8 +114,8 @@
   }
 
   /* Marquee logos */
-  [style*="minWidth: 140"] {
-    minWidth: 100px !important;
+  [style*="min-width: 140"] {
+    min-width: 100px !important;
     padding: 4px 12px !important;
   }
 
